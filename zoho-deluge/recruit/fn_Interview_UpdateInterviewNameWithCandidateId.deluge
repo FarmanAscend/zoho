@@ -1,0 +1,12 @@
+// interview_id = 757134000002907009;
+interview_data = zoho.recruit.getRecordById("Interviews",interview_id,"zrecruit");
+interview_name = interview_data.get("Interview Name");
+CANDIDATEID = interview_data.get("CANDIDATEID");
+candidate_data = zoho.recruit.getRecordById("Candidates",CANDIDATEID,"zrecruit");
+candidate_id = candidate_data.get("Candidate ID");
+new_interview_name = interview_name + " - " + candidate_id;
+info new_interview_name;
+mp = Map();
+mp.put("Candidate_ID_2",candidate_id);
+updated = zoho.recruit.updateRecord("Interviews",interview_id,mp,false,"zrecruit");
+info updated;
