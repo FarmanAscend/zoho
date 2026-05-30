@@ -1,0 +1,38 @@
+// Get Application Record
+// applicationId = 757134000003395097;
+applicationRecord = invokeurl
+[
+	url :"https://recruit.zoho.com/recruit/v2/Applications/" + applicationId
+	type :GET
+	connection:"zrecruit"
+];
+// info applicationRecord;
+if(applicationRecord.get("data") != null)
+{
+	appData = applicationRecord.get("data").get(0);
+	// Fetch IDs
+	candidateId = appData.get("$Candidate_Id");
+	applicationId = appData.get("id");
+	jobId = appData.get("$Job_Opening_Id");
+	// 	info candidateId;
+	// 	info applicationId;
+	// 	info jobId;
+	updateMap = Map();
+	updateMap.put("Application_ID",applicationId);
+	updateMap.put("Job_ID",jobId);
+	dataList = List();
+	dataList.add(updateMap);
+	bodyMap = Map();
+	bodyMap.put("data",dataList);
+	updateCandidate = invokeurl
+	[
+		url :"https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId
+		type :PUT
+		parameters:bodyMap.toString()
+		connection:"zrecruit"
+	];
+	info updateCandidate;
+	// 	info updateMap;
+	// 	updateResponse = zoho.recruit.updateRecord("Candidates", candidateId, updateMap,False,"zrecruit");
+	// 	info updateResponse;
+}
