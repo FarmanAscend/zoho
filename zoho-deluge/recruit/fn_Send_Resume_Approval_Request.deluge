@@ -1,0 +1,137 @@
+candidateData = zoho.recruit.getRecordById("Candidates",candidateId,"zrecruit");
+resumeApprovalSent = candidateData.get("Resume Approval Sent");
+candidateName = candidateData.get("First Name");
+msg = "";
+info resumeApprovalSent != "true";
+if(resumeApprovalSent != "true")
+{
+	attachments = invokeurl
+	[
+		url :"https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId + "/Attachments"
+		type :GET
+		connection:"zrecruit"
+	];
+	data = attachments.get("data");
+	fileList = List();
+	for each  attachement in data
+	{
+		attachType = ifnull(ifnull(attachement.get("$attach_type"),"").get("name"),"");
+		attachmentId = attachement.get("id");
+		info attachType;
+		if(attachType = "Formatted Resume")
+		{
+			fileObj = invokeurl
+			[
+				url :"https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId + "/Attachments/" + attachmentId
+				type :GET
+				connection:"zrecruit"
+			];
+			fileObj.setParamName("file");
+			fileList.add(fileObj);
+			//=======================Body===========
+			approvalLink = "https://creatorapp.zohopublic.com/fuseitglobal/resume-approval/form-perma/Approval_Form/9WunxW91NSDj5pUk3KuuWSn3emmS12VNHfDEzXQa88tFOGe4sX129Qmea4343pTAe6vnHAA0msn7gnNNEqMTHAU1PSxvd7n6hNKT?Candidate_ID=" + candidateId;
+			emailBody = "";
+			emailBody = emailBody + "<div style='margin:0;padding:25px;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#1f2937;'>";
+			emailBody = emailBody + "<div style='max-width:680px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #dbe4ee;box-shadow:0 4px 18px rgba(0,0,0,0.05);'>";
+			emailBody = emailBody + "<div style='background:linear-gradient(135deg,#0b1f3a,#163b65);padding:0;overflow:hidden;'>";
+			emailBody = emailBody + "<table width='100%' cellpadding='0' cellspacing='0' border='0'>";
+			emailBody = emailBody + "<tr>";
+			emailBody = emailBody + "<td style='padding:30px 35px;vertical-align:middle;'>";
+			emailBody = emailBody + "<h1 style='margin:0;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:0.5px;'>";
+			emailBody = emailBody + "FuseIT Global";
+			emailBody = emailBody + "</h1>";
+			emailBody = emailBody + "<p style='margin:10px 0 0;color:#dbeafe;font-size:14px;line-height:1.7;max-width:420px;'>";
+			emailBody = emailBody + "Connecting international talent with world-class project teaming solutions.";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "</td>";
+			emailBody = emailBody + "<td align='right' style='padding:0;vertical-align:bottom;'>";
+			emailBody = emailBody + "<div style='width:220px;height:170px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-top-left-radius:120px;position:relative;'>";
+			emailBody = emailBody + "<div style='position:absolute;top:22px;right:28px;color:white;font-size:24px;font-weight:700;letter-spacing:1px;'>OUR</div>";
+			emailBody = emailBody + "<div style='position:absolute;top:50px;right:28px;color:#dbeafe;font-size:24px;font-weight:700;letter-spacing:1px;'>VISION</div>";
+			emailBody = emailBody + "<div style='position:absolute;bottom:22px;left:22px;width:65px;height:65px;border:4px solid rgba(255,255,255,0.6);border-radius:50%;'></div>";
+			emailBody = emailBody + "<div style='position:absolute;bottom:45px;left:53px;width:4px;height:85px;background:rgba(255,255,255,0.6);'></div>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "</td>";
+			emailBody = emailBody + "</tr>";
+			emailBody = emailBody + "</table>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "<div style='padding:32px;'>";
+			emailBody = emailBody + "<h2 style='margin:0 0 16px;color:#0f2f4a;font-size:22px;font-weight:700;'>";
+			emailBody = emailBody + "Resume Review & Approval";
+			emailBody = emailBody + "</h2>";
+			emailBody = emailBody + "<p style='font-size:15px;line-height:1.7;margin:0 0 14px;color:#374151;'>";
+			emailBody = emailBody + "Hello " + candidateName + ",";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "<p style='font-size:15px;line-height:1.7;margin:0 0 14px;color:#4b5563;'>";
+			emailBody = emailBody + "We have attached your resume with this email for your review.";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "<p style='font-size:15px;line-height:1.7;margin:0 0 14px;color:#4b5563;'>";
+			emailBody = emailBody + "Please check the attached file carefully. If everything looks fine, kindly click the approval button below to confirm your resume.";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "<p style='font-size:15px;line-height:1.7;margin:0 0 24px;color:#4b5563;'>";
+			emailBody = emailBody + "Once approved, your confirmation will automatically be submitted to our recruitment team.";
+			emailBody = emailBody + "</p>";
+			/* ================= INFO BOX ================= */
+			emailBody = emailBody + "<div style='background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:18px;margin:24px 0;'>";
+			emailBody = emailBody + "<p style='margin:0;font-size:14px;color:#374151;'>";
+			emailBody = emailBody + "<strong>Candidate Name:</strong> " + candidateName;
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "<p style='margin:10px 0 0;font-size:14px;color:#374151;'>";
+			emailBody = emailBody + "<strong>Resume:</strong> Attached with this email";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "<div style='text-align:center;margin:32px 0;'>";
+			emailBody = emailBody + "<a href='" + approvalLink + "' style='background:linear-gradient(135deg,#1f7a8c,#2563eb);color:#ffffff;text-decoration:none;padding:14px 30px;border-radius:10px;font-size:15px;font-weight:700;display:inline-block;'>";
+			emailBody = emailBody + "Approve My Resume";
+			emailBody = emailBody + "</a>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "<p style='font-size:13px;line-height:1.6;color:#6b7280;margin:0 0 14px;text-align:center;'>";
+			emailBody = emailBody + "If the button does not work, please copy and paste the approval link into your browser.";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "<p style='font-size:15px;line-height:1.7;margin:28px 0 0;color:#374151;'>";
+			emailBody = emailBody + "Best regards,<br><strong>FuseIT Global Team</strong>";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "<div style='background:#f8fafc;padding:18px 28px;border-top:1px solid #e5e7eb;text-align:center;'>";
+			emailBody = emailBody + "<p style='margin:0;color:#6b7280;font-size:12px;line-height:1.6;'>";
+			emailBody = emailBody + "FuseIT Global | International Staffing & Project Teaming Solutions";
+			emailBody = emailBody + "</p>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "</div>";
+			emailBody = emailBody + "</div>";
+			sendmail
+			[
+				from :zoho.adminuserid
+				to :"farmanrao@fuseitglobal.com"
+				subject :"Please Review & Approve Your Resume"
+				message :emailBody
+				Attachments :file:fileList
+			]
+			msg = "Resume approval request email has been sent successfully to the candidate.";
+			//=====================update Candidate====================================
+			updateMap = Map();
+			updateMap.put("Resume_Approval_Sent",true);
+			dataList = List();
+			dataList.add(updateMap);
+			bodyMap = Map();
+			bodyMap.put("data",dataList);
+			updateCandidate = invokeurl
+			[
+				url :"https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId
+				type :PUT
+				parameters:bodyMap.toString()
+				connection:"zrecruit"
+			];
+			info updateCandidate;
+		}
+	}
+	if(msg == "")
+	{
+		msg = "Formatted resume not found. Please add a formatted resume before sending the approval request.";
+	}
+}
+else
+{
+	msg = "The resume approval request email has already been sent to this candidate.";
+}
+return msg;
