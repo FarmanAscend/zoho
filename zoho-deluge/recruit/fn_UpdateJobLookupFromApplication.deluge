@@ -1,0 +1,20 @@
+// screening_feedback_id = 757134000003538692;
+screeningRecord = zoho.recruit.getRecordById("CustomModule2",screening_feedback_id,"zrecruit");
+Candidate_ID = screeningRecord.get("Candidate_ID");
+// info Candidate_ID;
+candidateRecord = zoho.recruit.getRecordById("Candidates",Candidate_ID,"zrecruit");
+job_id = candidateRecord.get("Job ID");
+updateMap = Map();
+updateMap.put("Job",job_id);
+dataList = List();
+dataList.add(updateMap);
+bodyMap = Map();
+bodyMap.put("data",dataList);
+updateCandidate = invokeurl
+[
+	url :"https://recruit.zoho.com/recruit/v2/Screening_Feedback/" + screening_feedback_id
+	type :PUT
+	parameters:bodyMap.toString()
+	connection:"zrecruit"
+];
+info updateCandidate;
