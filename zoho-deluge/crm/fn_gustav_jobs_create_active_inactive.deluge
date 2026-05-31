@@ -1,0 +1,217 @@
+try 
+{
+	//=================Fetch All Active Jobs====================
+	all_active_jobs = zoho.crm.searchRecords("Gustav_Jobs","(Status:equals:Active)");
+	info "Active Jobs Count in CRM: " + all_active_jobs.size();
+	all_active_job_ids = list();
+	for each  job in all_active_jobs
+	{
+		// 	info job.get("Job_ID");
+		all_active_job_ids.add(job.get("Job_ID"));
+	}
+	//================
+	xmlResponse = invokeurl
+	[
+		url :"https://app.hellogustav.com/api/v2/jobs.xml"
+		type :GET
+	];
+	// gets an XML response
+	//  info xmlResponse;
+	//  info xmlResponse.executexpath("/CATALOG/CD").toXmlList(); 
+	// Sample XML data (provided)
+	xml_data = xmlResponse.executexpath("/jobs/job").toXmlList();
+	a = xml_data.size();
+	info a;
+	//===========
+	lisa = list();
+	con = 0;
+	for each  c in xml_data
+	{
+		if(con <= a)
+		{
+			info "a " + con;
+			//===========
+			xmlString = xml_data.get(con).get("job");
+			// 			info xmlString;
+			job = xmlString.executexpath("/job/id");
+			// info xml_data.get(3).get("job");
+			vendor_assignees = xml_data.get(con).get("job").getSuffixIgnoreCase("<vendor_assignees>").getPrefix("</vendor_assignees>");
+			user = ifnull(ifnull(vendor_assignees.getSuffixIgnoreCase("<user>"),"").getPrefix("</user>"),"");
+			first_name = ifnull(ifnull(vendor_assignees.getSuffixIgnoreCase("<first_name>"),"").getPrefix("</first_name>"),"");
+			last_name = ifnull(ifnull(vendor_assignees.getSuffixIgnoreCase("<last_name>"),"").getPrefix("</last_name>"),"");
+			info "last_name" + last_name;
+			info "first_name" + first_name;
+			// jobId  = job.get("job").get("id").toString();
+			// info jobId;
+			//
+			// isolate the <job>…</job> block
+			job = xmlString.getSuffixIgnoreCase("<job>").getPrefix("</job>");
+			// basic scalar fields
+			updated_at = job.getSuffixIgnoreCase("<updated_at>").getPrefix("</updated_at>");
+			w2_required = job.getSuffixIgnoreCase("<w2_employee_required>").getPrefix("</w2_employee_required>");
+			min_experience = job.getSuffixIgnoreCase("<min_work_experience>").getPrefix("</min_work_experience>");
+			recruiter_info = job.getSuffixIgnoreCase("<recruiter_info>").getPrefix("</recruiter_info>");
+			// job_id = job.getSuffixIgnoreCase("<id>").getPrefix("</id>");
+			job_url = job.getSuffixIgnoreCase("<job_url>").getPrefix("</job_url>");
+			job_id = job_url.getSuffixIgnoreCase("https://app.hellogustav.com/marketplace/");
+			vacancies = job.getSuffixIgnoreCase("<vacancies>").getPrefix("</vacancies>");
+			submission_url = job.getSuffixIgnoreCase("<submission_url>").getPrefix("</submission_url>");
+			hourly_bill_rate = job.getSuffixIgnoreCase("<hourly_bill_rate>").getPrefix("</hourly_bill_rate>");
+			interview_expenses_paid = job.getSuffixIgnoreCase("<interview_expenses_paid>").getPrefix("</interview_expenses_paid>");
+			schedule = job.getSuffixIgnoreCase("<schedule>").getPrefix("</schedule>");
+			reference_number = job.getSuffixIgnoreCase("<reference_number>").getPrefix("</reference_number>");
+			status = job.getSuffixIgnoreCase("<status>").getPrefix("</status>");
+			work_type = job.getSuffixIgnoreCase("<work_type>").getPrefix("</work_type>");
+			responsibility = job.getSuffixIgnoreCase("<responsibility>").getPrefix("</responsibility>");
+			client = job.getSuffixIgnoreCase("<client>").getPrefix("</client>");
+			hours_per_week = job.getSuffixIgnoreCase("<hours_per_week>").getPrefix("</hours_per_week>");
+			title = job.getSuffixIgnoreCase("<title>").getPrefix("</title>");
+			remote = job.getSuffixIgnoreCase("<remote>").getPrefix("</remote>");
+			onsite = "onsite";
+			if(remote == "true")
+			{
+				onsite = "remote";
+			}
+			//client node
+			info client;
+			info "job ID ";
+			// 			display = client.getSuffixIgnoreCase("<display>").getPrefix("</display>");
+			display = "";
+			client_id = ifnull(ifnull(client.getSuffixIgnoreCase("<id>"),"").getPrefix("</id>"),"");
+			client_name = ifnull(ifnull(client.getSuffixIgnoreCase("<name>"),"").getPrefix("</name>"),"");
+			count_visa_status = {1,2,3,4,5,6,7,8,9,10};
+			info "CLient Name: " + client_name;
+			// for each i in count_visa_status
+			// {
+			// }
+			//schedule node
+			end_fixed = ifnull(ifnull(job.getSuffixIgnoreCase("<end_fixed>"),"").getPrefix("</end_fixed>"),"");
+			duration_month = ifnull(ifnull(job.getSuffixIgnoreCase("<amount>"),"").getPrefix("</amount>"),"");
+			unit = ifnull(ifnull(job.getSuffixIgnoreCase("<unit>"),"").getPrefix("</unit>"),"");
+			// if(end_fixed){
+			// 	duration_month = job.getSuffixIgnoreCase("<amount>").getPrefix("</amount>");
+			// 	unit = job.getSuffixIgnoreCase("<unit>").getPrefix("</unit>");
+			// }
+			// info schedule;
+			// company sub-node
+			company = job.getSuffixIgnoreCase("<company>").getPrefix("</company>");
+			company_id = company.getSuffixIgnoreCase("<id>").getPrefix("</id>");
+			industry_node = company.getSuffixIgnoreCase("<industry>").getPrefix("</industry>");
+			industry_id = industry_node.getSuffixIgnoreCase("<id>").getPrefix("</id>");
+			industry_name = industry_node.getSuffixIgnoreCase("<name>").getPrefix("</name>");
+			company_name = company.getSuffixIgnoreCase("<name>").getPrefix("</name>");
+			info "company name " + company_name;
+			special_type = company.getSuffixIgnoreCase("<special_type>").getPrefix("</special_type>");
+			// category sub-node
+			category = job.getSuffixIgnoreCase("<category>").getPrefix("</category>");
+			category_id = category.getSuffixIgnoreCase("<id>").getPrefix("</id>");
+			category_name = category.getSuffixIgnoreCase("<name>").getPrefix("</name>");
+			// vendor_assignees (your original example)
+			vendor_assignees = ifnull(ifnull(job.getSuffixIgnoreCase("<vendor_assignees>"),"").getPrefix("</vendor_assignees>"),"");
+			user_block = ifnull(ifnull(vendor_assignees.getSuffixIgnoreCase("<user>"),"").getPrefix("</user>"),"");
+			first_name = ifnull(ifnull(user_block.getSuffixIgnoreCase("<first_name>"),"").getPrefix("</first_name>"),"");
+			last_name = ifnull(ifnull(user_block.getSuffixIgnoreCase("<last_name>"),"").getPrefix("</last_name>"),"");
+			position = ifnull(ifnull(user_block.getSuffixIgnoreCase("<position>"),"").getPrefix("</position>"),"");
+			Assigned_recruiters = first_name + " " + last_name;
+			// bill rate 
+			if(hourly_bill_rate != "")
+			{
+				amount = hourly_bill_rate.getSuffixIgnoreCase("<amount>").getPrefix("</amount>");
+				currency = hourly_bill_rate.getSuffixIgnoreCase("<currency>").getPrefix("</currency>");
+				Bill_rate_hr = amount + " " + currency + "/hr";
+			}
+			// // log out a few to verify
+			// info "Updated At: " + updated_at;
+			// info "Company Name: " + company_name;
+			// info "Industry: " + industry_id + " (" + industry_name + ")";
+			// // info "Visa Statuses: " + visa_statuses.toString();
+			// info "Vendor: " + first_name + " " + last_name;
+			// info "Bill Rate: " + amount;
+			// info "currency: " + currency;
+			//========Visa Status
+			csvStatuses = xmlString.executeXPath("/job/visa_status/text()");
+			visa_all_statuses = list();
+			if(csvStatuses != null && csvStatuses != "")
+			{
+				// toList(delimiter) splits the string on the delimiter into a List
+				visa_all_statuses = csvStatuses.toList("-|-");
+			}
+			farman = "";
+			for each  visa_status in visa_all_statuses
+			{
+				farman = farman + visa_status + "\n";
+			}
+			// info farman;
+			//====================Create Job///////////
+			mp1 = Map();
+			mp1.put("Name",title);
+			mp1.put("Company_name",company_name);
+			mp1.put("Assigned_recruiters",Assigned_recruiters);
+			mp1.put("End_client",client_name);
+			mp1.put("Bill_rate_hr",Bill_rate_hr);
+			mp1.put("On_site_Remote",onsite);
+			mp1.put("Reference_number",reference_number);
+			mp1.put("Start_date","start");
+			mp1.put("No_of_vacancies",vacancies);
+			mp1.put("Location",null);
+			mp1.put("Work_permits_accepted",farman);
+			mp1.put("Status","Active");
+			mp1.put("Job_ID",job_id);
+			mp1.put("Responsibilities",responsibility);
+			mp1.put("Hours_per_week",hours_per_week);
+			mp1.put("Required",null);
+			mp1.put("Job_industry",industry_name);
+			mp1.put("Type_of_search",null);
+			mp1.put("Job_category",category_name);
+			mp1.put("Type",work_type);
+			info job_id;
+			if(all_active_job_ids.contains(job_id))
+			{
+				info "yes";
+				info all_active_job_ids.size();
+				all_active_job_ids.removeElement(job_id);
+				info all_active_job_ids.size();
+			}
+			else
+			{
+				info "Create Job";
+				create_job = zoho.crm.createRecord("Gustav_Jobs",mp1,{"trigger":{"workflow"}});
+				info "no";
+			}
+			con = con + 1;
+			info "count " + con;
+		}
+		else
+		{
+			info "hello";
+		}
+	}
+	//==================make inactive jobs==================
+	info "farman " + all_active_job_ids.size();
+	for each  job_id in all_active_job_ids
+	{
+		search_crm_job = zoho.crm.searchRecords("Gustav_Jobs","(Job_ID:equals:" + job_id + ")");
+		if(search_crm_job != null && search_crm_job.size() > 0)
+		{
+			crm_id = search_crm_job.get(0).get("id");
+			update = Map();
+			update.put("Status","Inactive");
+			update = zoho.crm.updateRecord("Gustav_Jobs",crm_id,update,{"trigger":{"workflow"}});
+		}
+		else
+		{
+		}
+	}
+}
+catch (e)
+{
+	info "error " + e;
+	to_email = {"farmanrao@fuseitglobal.com","dagmaraustin@gmail.com"};
+	sendmail
+	[
+		from :zoho.loginuserid
+		to :to_email
+		subject :"Error Found - gustav_jobs_create_active_inactive"
+		message :"Here is the error detail and record count " + e + " \ncount: " + con
+	]
+}
