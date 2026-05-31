@@ -1,0 +1,11 @@
+string fn_get_summary_link(map data)
+{
+Script_link = data.get("Script_link");
+if(Script_link == null)
+{
+	return "Script_link not found";
+}
+updated_url = Script_link.replaceAll("https://docs.google.com/","");
+info updated_url;
+return updated_url;
+}
