@@ -1,0 +1,6 @@
+string fn_extract_candidate_id(map data)
+{
+	interview_id = data.get("interview_id");
+	candidate_id = data.get("candidate_id");
+	return candidate_id;
+}
