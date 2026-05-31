@@ -1,0 +1,11 @@
+string fn_extract_video_link(map data)
+{
+info data;
+video_link = data.get("Video_link");
+if(video_link == null)
+{
+	return "Video_link not found";
+}
+updated_url = video_link.replaceAll("https://drive.google.com/","");
+return updated_url;
+}
