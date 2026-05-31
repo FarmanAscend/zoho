@@ -1,0 +1,20 @@
+string fn_get_recruit_user_id_by_email(string email)
+{
+response = invokeurl
+[
+	url :"https://recruit.zoho.com/recruit/v2/users"
+	type :GET
+	connection:"recruit1"
+];
+users = response.get("users");
+for each  user in users
+{
+	if(user.get("email") == email)
+	{
+		user_id = user.get("id");
+		info user_id;
+		break;
+	}
+}
+return user_id;
+}
