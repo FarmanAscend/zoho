@@ -1,0 +1,29 @@
+string fn_get_candidate_job_opening_id(string candidate_id)
+{
+// candidateId = "757134000002141113";
+// Candidate record ID
+response = invokeurl
+[
+	url :"https://recruit.zoho.com/recruit/v2/Candidates/" + candidate_id + "/Applications?per_page=200&page=1"
+	type :GET
+	connection:"recruit1"
+];
+if(response.containKey("data"))
+{
+	for each  app in response.get("data")
+	{
+		Application_Status = ifnull(app.get("Application_Status"),"");
+		if(Application_Status != "Archived")
+		{
+			// 			info "Application ID: " + ifnull(app.get("id"),"");
+			// 			info "Application Status: " + ifnull(app.get("Application_Status"),"");
+			job_opening_id = app.get("$Job_Opening_Id");
+		}
+	}
+}
+else
+{
+	info "No related application records found.";
+}
+return job_opening_id;
+}
