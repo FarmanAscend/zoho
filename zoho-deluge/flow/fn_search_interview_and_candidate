@@ -1,0 +1,153 @@
+map fetch_links(string email_text)
+{
+// email_text = input.email_text.toString();
+result_map = Map();
+video_link = "";
+script_link = "";
+candidate_email = "";
+// ---------------- VIDEO LINK ----------------
+if(email_text.contains("https://drive.google.com/file"))
+{
+	start_index = email_text.indexOf("https://drive.google.com/file");
+	temp = email_text.subString(start_index);
+	video_link = temp.subString(0,temp.indexOf("\""));
+}
+// ---------------- SCRIPT LINK ----------------
+if(email_text.contains("https://docs.google.com/document"))
+{
+	start_index = email_text.indexOf("https://docs.google.com/document");
+	temp = email_text.subString(start_index);
+	script_link = temp.subString(0,temp.indexOf("\""));
+}
+// ---------------- CANDIDATE EMAIL ----------------
+if(email_text.contains("candidate:"))
+{
+	if(email_text.contains("mailto:"))
+	{
+		start_index = email_text.indexOf("mailto:") + 7;
+		temp = email_text.subString(start_index);
+		candidate_email = temp.subString(0,temp.indexOf("\""));
+	}
+}
+// ---------------- CLEAN QUERY PARAMETERS ----------------
+if(video_link != "" && video_link.contains("?"))
+{
+	video_link = video_link.subString(0,video_link.indexOf("?"));
+}
+if(script_link != "" && script_link.contains("?"))
+{
+	script_link = script_link.subString(0,script_link.indexOf("?"));
+}
+// ---------------- ADD TO MAP ----------------
+result_map.put("Video_link",video_link);
+result_map.put("Script_link",script_link);
+result_map.put("candidate",candidate_email);
+return result_map;
+//===================================withoout email code======================
+// // Get HTML email text
+// // email_text = input.email_text.toString();
+// result_map = Map();
+// video_link = "";
+// script_link = "";
+// // ---------------- VIDEO LINK EXTRACTION ----------------
+// if(email_text.contains("https://drive.google.com/file"))
+// {
+// 	start_index = email_text.indexOf("https://drive.google.com/file");
+// 	temp_text = email_text.subString(start_index);
+// 	// Cut at first quote
+// 	if(temp_text.contains("\""))
+// 	{
+// 		video_link = temp_text.subString(0,temp_text.indexOf("\""));
+// 	}
+// 	else if(temp_text.contains("<"))
+// 	{
+// 		video_link = temp_text.subString(0,temp_text.indexOf("<"));
+// 	}
+// 	else
+// 	{
+// 		video_link = temp_text;
+// 	}
+// }
+// // ---------------- SCRIPT LINK EXTRACTION ----------------
+// if(email_text.contains("https://docs.google.com/document"))
+// {
+// 	start_index = email_text.indexOf("https://docs.google.com/document");
+// 	temp_text = email_text.subString(start_index);
+// 	// Cut at first quote
+// 	if(temp_text.contains("\""))
+// 	{
+// 		script_link = temp_text.subString(0,temp_text.indexOf("\""));
+// 	}
+// 	else if(temp_text.contains("<"))
+// 	{
+// 		script_link = temp_text.subString(0,temp_text.indexOf("<"));
+// 	}
+// 	else
+// 	{
+// 		script_link = temp_text;
+// 	}
+// }
+// // -------- CLEAN QUERY PARAMETERS --------
+// if(video_link != "" && video_link.contains("?"))
+// {
+// 	video_link = video_link.subString(0,video_link.indexOf("?"));
+// }
+// if(script_link != "" && script_link.contains("?"))
+// {
+// 	script_link = script_link.subString(0,script_link.indexOf("?"));
+// }
+// // Put in map
+// result_map.put("Video_link",video_link);
+// result_map.put("Script_link",script_link);
+// return result_map;
+// //================Message text code ==================//
+// // Input: Email message text
+// // email_text = input.email_text.toString();
+// // Initialize map
+// result_map = Map();
+// video_link = "";
+// script_link = "";
+// // Split email into lines
+// lines = email_text.toList("\n");
+// // Loop through lines
+// for each  line in lines
+// {
+// 	line_trim = line.trim();
+// 	// Extract Video Link
+// 	if(line_trim.contains("drive.google.com/file"))
+// 	{
+// 		video_link = line_trim;
+// 	}
+// 	// Extract Script Link
+// 	if(line_trim.contains("docs.google.com/document"))
+// 	{
+// 		script_link = line_trim;
+// 	}
+// }
+// // 🔧 CLEAN VIDEO LINK
+// if(video_link != "")
+// {
+// 	video_link = video_link.replaceAll("<","");
+// 	video_link = video_link.replaceAll(">","");
+// 	if(video_link.contains("?"))
+// 	{
+// 		video_parts = video_link.toList("?");
+// 		video_link = video_parts.get(0);
+// 	}
+// }
+// // 🔧 CLEAN SCRIPT LINK
+// if(script_link != "")
+// {
+// 	script_link = script_link.replaceAll("<","");
+// 	script_link = script_link.replaceAll(">","");
+// 	if(script_link.contains("?"))
+// 	{
+// 		script_parts = script_link.toList("?");
+// 		script_link = script_parts.get(0);
+// 	}
+// }
+// // Put into map
+// result_map.put("Video_link",video_link);
+// result_map.put("Script_link",script_link);
+// return result_map;
+}
