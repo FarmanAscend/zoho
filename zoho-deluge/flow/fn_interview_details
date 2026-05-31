@@ -1,4 +1,4 @@
-map interview_details(string data)
+map fn_interview_details(string data)
 {
 text = data;
 // Or assign your string directly
