@@ -1,0 +1,114 @@
+crm_jobDetails = zoho.crm.getRecordById("Gustav_Jobs",CRM_JobID);
+// info crm_jobDetails;
+Posting_Title = crm_jobDetails.get("Name");
+Contact_Name = crm_jobDetails.get("Assigned_recruiters").toList(" ").get(0);
+searchCriteria = "First_Name|starts with|" + Contact_Name;
+info searchCriteria;
+zrecruit_Contacts = invokeurl
+[
+	url :"https://recruit.zoho.com/recruit/v2/Contacts/search?criteria=(First_Name:contains:" + Contact_Name + ")"
+	type :GET
+	parameters:searchCriteria
+	connection:"zrecruit"
+];
+info zrecruit_Contacts;
+if(zrecruit_Contacts.contains("data"))
+{
+	info "true";
+	Contact_ID = zrecruit_Contacts.get("data").get(0).get("id");
+	Client_ID = zrecruit_Contacts.get("data").get(0).get("Client_Name").get("id");
+	Responsibilities = crm_jobDetails.get("Responsibilities");
+	// Split using double asterisk "**"
+	segments = Responsibilities.toList("**");
+	// Create a map to hold key-value pairs
+	infoMap = Map();
+	count = 0;
+	// Iterate using index-based loop simulation
+	for each  item in segments
+	{
+		if(count % 2 == 1)
+		{
+			// Odd index => key
+			key = item.trim();
+			if(count + 1 < segments.size())
+			{
+				value = segments.get(count + 1).trim();
+				// Remove leading colon if present
+				if(value.startsWith(":"))
+				{
+					value = value.subString(1).trim();
+				}
+				infoMap.put(key,value);
+			}
+		}
+		count = count + 1;
+	}
+	// Output the map
+	info infoMap;
+	infoMapKeys = infoMap.keys();
+	Description_HTML = "";
+	for each  key_record in infoMapKeys
+	{
+		// 		if(key_record.contains("Location") || key_record.contains("Responsibilities") || key_record.contains("Job Duties") || key_record.contains("Job Description") || key_record.contains("Qualifications") || key_record.contains("Skills Required") || key_record.contains("Duration") || key_record.contains("Job Summary") || key_record.contains("Nice to Have Skills"))
+		// 		{
+		Description_HTML = Description_HTML + "<h3><b>" + key_record + "</b></h3>";
+		Description_HTML = Description_HTML + "<p>" + infoMap.get(key_record) + "</p><br>";
+		// 		}
+	}
+	JobType = crm_jobDetails.get("Hours_per_week");
+	if(JobType == "40.0")
+	{
+		JobType = "Full time";
+	}
+	else
+	{
+		JobType = "";
+	}
+	Industry = crm_jobDetails.get("Job_industry");
+	No_of_Position = crm_jobDetails.get("No_of_vacancies");
+	RefNo = crm_jobDetails.get("Reference_number");
+	Gustav_JobID = crm_jobDetails.get("Job_ID");
+	Permits_Accepted = crm_jobDetails.get("Work_permits_accepted").replaceAll("\\n",",");
+	zrecruit_jobMap = Map();
+	zrecruit_jobMap.put("Job_Opening_Name",Posting_Title);
+	zrecruit_jobMap.put("Contact_Name",Contact_ID);
+	zrecruit_jobMap.put("Client_Name",Client_ID);
+	zrecruit_jobMap.put("Job_Type",JobType);
+	zrecruit_jobMap.put("Industry",Industry);
+	zrecruit_jobMap.put("Number_of_Positions",No_of_Position);
+	zrecruit_jobMap.put("Job_Description",Description_HTML);
+	zrecruit_jobMap.put("Reference_number",RefNo);
+	zrecruit_jobMap.put("Job_ID",Gustav_JobID);
+	zrecruit_jobMap.put("CRM_Record_ID",CRM_JobID.toString());
+	zrecruit_jobMap.put("Work_Permits_Accepted",Permits_Accepted);
+	info "zrecruit_jobMap: " + zrecruit_jobMap;
+	jobs_list = List();
+	jobs_list.add(zrecruit_jobMap);
+	extra_map = Map();
+	create_Job = zoho.recruit.v2.createRecords("JobOpenings",jobs_list,extra_map,extra_map,"zrecruit");
+	info "create_Job: " + create_Job;
+	recruit_jobID = create_Job.get("data").get(0).get("details").get("id");
+	data_map = Map();
+	data_map.put("Recruit_Record_ID",recruit_jobID);
+	info zoho.crm.updateRecord("Gustav_Jobs",CRM_JobID,data_map);
+}
+else
+{
+	// ===== Inputs / placeholders =====
+	recipientEmail = "maria@fuseitglobal.com";
+	bcc_list = {"farmanrao@fuseitglobal.com","jami@fuseitglobal.com","brandi@fuseitglobal.com","faith@fuseitglobal.com","dagmaraustin@gmail.com"};
+	crm_job_link = "https://crm.zoho.com/crm/org835840750/tab/CustomModule1/" + CRM_JobID;
+	// ===== Subject =====
+	mailSubject = "Action required: CRM job not created in Recruit — " + Posting_Title;
+	// ===== HTML body =====
+	mailBody = "<html><body style='font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111;'>" + "<p>Hi Maria,</p>" + "<p>A new job has been created in <b>CRM</b>, but the corresponding <b>Recruit</b> record hasn't been created yet." + " Please follow the process below to create it in Recruit:</p>" + "<ol>" + "<li>Open the job in CRM (<a href='" + crm_job_link + "'>click here</a>)</li>" + "<li>Add Client</li>" + "<li>Click the <b>"Create Recruit Job"</b> button</li>" + "</ol>" + "<p><b>CRM Job:</b> <a href='" + crm_job_link + "'>" + Posting_Title + "</a></p>" + "<p>If you face any issues, please contact me. Thanks!<br/>" + "</body></html>";
+	// ===== Send mail =====
+	sendmail
+	[
+		from :zoho.loginuserid
+		to :recipientEmail
+		bcc :bcc_list
+		subject :mailSubject
+		message :mailBody
+	]
+}
