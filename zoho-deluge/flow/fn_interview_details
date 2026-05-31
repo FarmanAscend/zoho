@@ -1,0 +1,39 @@
+map interview_details(string data)
+{
+text = data;
+// Or assign your string directly
+// -------- 1. Extract Job Name (inside brackets) --------
+start_job = text.indexOf("(") + 1;
+end_job = text.indexOf(")");
+Job_Name = text.subString(start_job,end_job).trim();
+// -------- 2. Extract Main Interview Section (before bracket) --------
+main_part = text.subString(0,text.indexOf("(")).trim();
+// Remove everything before colon (Fwd:, Notes:, Invitation:, etc.)
+if(main_part.contains(":"))
+{
+	parts = main_part.toList(":");
+	main_part = parts.get(parts.size() - 1).trim();
+}
+// Remove starting quote if exists
+if(main_part.startsWith("“"))
+{
+	main_part = main_part.subString(1,main_part.length()).trim();
+}
+// Now main_part looks like:
+// "Interview via Google Meet - Test Test"
+// OR
+// "Live Video Interview - Farman Rao"
+// -------- 3. Split by dash --------
+dash_index = main_part.indexOf(" -");
+Interview_Name = main_part.subString(0,dash_index).trim();
+Candidate_Name = main_part.subString(dash_index + 2,main_part.length()).trim();
+// -------- Final Output --------
+result_map = Map();
+// mp.put(Interview_Name);
+info Candidate_Name;
+info Job_Name;
+result_map.put("Interview_Name",Interview_Name);
+result_map.put("Candidate_Name",Candidate_Name);
+result_map.put("Job_Name",Job_Name);
+return result_map;
+}
