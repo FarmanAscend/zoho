@@ -95,8 +95,8 @@ if(zrecruit_Contacts.contains("data"))
 else
 {
 	// ===== Inputs / placeholders =====
-	recipientEmail = "maria@fuseitglobal.com";
-	bcc_list = {"farmanrao@fuseitglobal.com","jami@fuseitglobal.com","brandi@fuseitglobal.com","faith@fuseitglobal.com","dagmaraustin@gmail.com"};
+	recipientEmail = "farmanrao@fuseitglobal.com";
+	bcc_list = {"farmanrao@fuseitglobal.com"};
 	crm_job_link = "https://crm.zoho.com/crm/org835840750/tab/CustomModule1/" + CRM_JobID;
 	// ===== Subject =====
 	mailSubject = "Action required: CRM job not created in Recruit — " + Posting_Title;
