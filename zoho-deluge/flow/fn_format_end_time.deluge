@@ -1,0 +1,10 @@
+string fn_format_end_time(string end_time)
+{
+	inputDateStr = end_time;
+	//"15-Apr-2026 12:00:00";
+	// Convert string to datetime
+	dt = inputDateStr.toDateTime("dd-MMM-yyyy HH:mm:ss");
+	// Format to required ISO format
+	formattedDate = dt.toString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	return formattedDate;
+}
