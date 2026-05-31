@@ -1,0 +1,70 @@
+void attach_file_to_candidate(string rec_id, string candidate_id)
+{
+	candidateId = candidate_id.trim();
+	creatorFile = invokeurl
+	[
+		url :"https://www.zohoapis.com/creator/v2.1/data/fuseitglobal/interview-pre-scheduling/report/candidate_submissions_Report/" + rec_id + "/Resume_Upload/download"
+		type :GET
+		connection:"zcreator"
+	];
+	multipartList = List();
+	multipartList.add({"paramName":"file","content":creatorFile});
+	resp = invokeurl
+	[
+		url :"https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId + "/Attachments?attachments_category=Pre Interview Resume"
+		type :POST
+		files:multipartList
+		connection:"recruit1"
+	];
+	info resp;
+	//=================Update name too =========================
+	// candidateId = input.candidate_id.toString().trim();
+	// creatorFile = invokeurl
+	// [
+	// 	url: "https://www.zohoapis.com/creator/v2.1/data/fuseitglobal/interview-pre-scheduling/report/candidate_submissions_Report/" + input.ID + "/Resume_Upload/download"
+	// 	type: GET
+	// 	connection: "creator_connection"
+	// ];
+	// // ? Original filename le lo
+	// originalFileName = input.Resume_Upload.actualName;
+	// // ? Prefix add karo
+	// customFileName = "pre_" + originalFileName;
+	// multipartList = List();
+	// multipartList.add({
+	// 	"paramName":"file",
+	// 	"content":creatorFile,
+	// 	"fileName":customFileName
+	// });
+	// resp = invokeurl
+	// [
+	// 	url: "https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId + "/Attachments?attachments_category=Pre Interview Resume"
+	// 	type: POST
+	// 	connection: "zoho_recruit_connection"
+	// 	files: multipartList
+	// ];
+	// info resp;
+	//=====================Update name too==============
+	//==============================================
+	// candidateId = input.candidate_id.toString().trim();
+	// fileMap = Map();
+	// fileMap.put("file", input.Resume_Upload);
+	// resp = invokeurl
+	// [
+	// 	url: "https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId + "/Attachments?attachments_category=Resume"
+	// 	type: POST
+	// 	connection: "zoho_recruit_connection"
+	// 	files: fileMap
+	// ];
+	// info resp;
+	//=================================================
+	// candidateId = input.candidate_id.toString().trim();
+	// resp = invokeurl
+	// [
+	// 	url: "https://recruit.zoho.com/recruit/v2/Candidates/" + candidateId + "/Attachments?attachments_category=Resume"
+	// 	type: POST
+	// 	connection: "zoho_recruit_connection"
+	// 	files: input.Resume_Upload
+	// ];
+	// info resp;
+	//===========================================
+}
