@@ -1,0 +1,8 @@
+string fn_extract_url_from_html(string linkedIn_url)
+{
+startIndex = linkedIn_url.indexOf("href= \"") + 7;
+endIndex = linkedIn_url.indexOf("\"",startIndex);
+url = linkedIn_url.subString(startIndex,endIndex);
+info url;
+return url;
+}
